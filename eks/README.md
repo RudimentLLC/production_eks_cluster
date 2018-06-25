@@ -8,36 +8,44 @@ This example shows how one can integrate the [AWS VPC](https://registry.terrafor
 * [Heptio Authenticator](https://github.com/heptio/authenticator) (>= v0.3.0) installed and in your local machine's PATH
 
 ## Walkthrough
-Run the following commands from this directory:
+Run the following command(s) from this directory:
 
-```bash
-# always start by running terraform init
+1. Initialize Terraform
+```console
 $ terraform init
 Initializing modules
 - module.vpc
 - module.eks
-
 ...
-Terraform has been successfully initialized!
 
-# next, run terraform plan to make sure everything looks correct
+Terraform has been successfully initialized!
+```
+
+2. Check the plan
+```console
 $ terraform plan
 ...
-Plan: 47 to add, 0 to change, 0 to destroy.
 
-# assuming everything looks correct, run terraform apply
-# this operation takes about 10 minutes to complete
+Plan: 47 to add, 0 to change, 0 to destroy.
+```
+
+3. Create the resources
+```console
 $ terraform apply
 ...
+
 Do you want to perform these actions?
   Terraform will perform the actions described above.
   Only 'yes' will be accepted to approve.
 
   Enter a value: yes
 ...
-Apply complete! Resources: 47 added, 0 changed, 0 destroyed.
 
-# configure kubectl
+Apply complete! Resources: 47 added, 0 changed, 0 destroyed.
+```
+
+4. Configure kubectl
+```console
 $ export KUBECONFIG=~/.kube/config.eks
 $ cp kubeconfig $KUBECONFIG
 $ kubectl apply -f config-map-aws-auth.yaml
@@ -45,8 +53,10 @@ configmap "aws-auth" configured
 ```
 
 # Cleanup 
-```
+Run the following command(s) from this directory:
+```console
 $ terraform destroy
 ...
+
 Destroy complete! Resources: 47 destroyed.
 ```
