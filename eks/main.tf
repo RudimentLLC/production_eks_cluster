@@ -4,7 +4,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "1.14.0"
 
-  name = "${var.name}"
+  name = "${var.cluster_name}"
   cidr = "10.0.0.0/16"
 
   azs = [
@@ -19,8 +19,8 @@ module "vpc" {
   single_nat_gateway = true
 
   tags = {
-    Name                                = "${var.cluster_name}"
-    "kubernetes.io/cluster/${var.name}" = "shared"
+    Name                                        = "${var.cluster_name}"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 }
 
