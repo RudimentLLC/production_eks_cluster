@@ -1,0 +1,6 @@
+**/.terraform/*
+*.tfstate*
+*.tfvars*
+*.log
+config-map-aws-auth.yaml
+kubeconfig
