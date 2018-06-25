@@ -35,5 +35,18 @@ Do you want to perform these actions?
 
   Enter a value: yes
 ...
+Apply complete! Resources: 47 added, 0 changed, 0 destroyed.
 
+# configure kubectl
+$ export KUBECONFIG=~/.kube/config.eks
+$ cp kubeconfig $KUBECONFIG
+$ kubectl apply -f config-map-aws-auth.yaml
+configmap "aws-auth" configured
+```
+
+# Cleanup 
+```
+$ terraform destroy
+...
+Destroy complete! Resources: 0 added, 0 changed, 47 destroyed.
 ```
