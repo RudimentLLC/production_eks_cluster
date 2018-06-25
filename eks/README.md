@@ -48,5 +48,5 @@ configmap "aws-auth" configured
 ```
 $ terraform destroy
 ...
-Destroy complete! Resources: 0 added, 0 changed, 47 destroyed.
+Destroy complete! Resources: 47 destroyed.
 ```
