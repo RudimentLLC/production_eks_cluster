@@ -44,7 +44,7 @@ Do you want to perform these actions?
 Apply complete! Resources: 47 added, 0 changed, 0 destroyed.
 ```
 
-4. Configure kubectl
+4. Configure Kubectl
 ```console
 $ export KUBECONFIG=~/.kube/config.eks
 $ cp kubeconfig $KUBECONFIG
