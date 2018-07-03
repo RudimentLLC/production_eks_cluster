@@ -6,6 +6,7 @@ This example shows how one can integrate the [AWS VPC](https://registry.terrafor
 * [AWS Authentication](https://www.terraform.io/docs/providers/aws/index.html#authentication) setup on your local machine
 * [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) (>= v1.10.4) installed and in your local machine's PATH
 * [Heptio Authenticator](https://github.com/heptio/authenticator) (>= v0.3.0) installed and in your local machine's PATH
+* [Helm](hhttps://docs.helm.sh/using_helm/) installed and in your local machine's PATH
 
 ## Walkthrough
 Run the following command(s) from this directory:
