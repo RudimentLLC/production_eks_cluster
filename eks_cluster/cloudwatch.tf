@@ -8,8 +8,8 @@ resource "aws_cloudwatch_log_group" "this" {
 EOF
 
     environment {
-      AWS_ACCESS_KEY = ""
-      AWS_SECRET_KEY = ""
+      AWS_ACCESS_KEY_ID     = ""
+      AWS_SECRET_ACCESS_KEY = ""
     }
   }
 }
