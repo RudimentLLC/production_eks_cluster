@@ -36,3 +36,32 @@ module "eks" {
     Name = "${var.cluster_name}"
   }
 }
+
+resource "null_resource" "post-provision" {
+  # wait for EKS cluster to be ready
+  provisioner "local-exec" {
+    environment {
+      EKS_CLUSTER = "${module.eks.cluster_id}"
+    }
+
+    command = <<EOF
+    until [ $( aws eks describe-cluster --cluster-name $EKS_CLUSTER | jq -r .cluster.status ) == ACTIVE ] ;
+    do echo "Waiting for EKS cluster $EKS_CLUSTER to be ready..." ;
+    sleep 20 ;
+    done
+EOF
+  }
+
+  # configure cluster, install Helm
+  provisioner "local-exec" {
+    command = <<EOF
+    export KUBECONFIG="$HOME/.kube/config.eks"
+    cp kubeconfig $KUBECONFIG
+    kubectl cluster-info
+    kubectl apply -f config-map-aws-auth.yaml
+    kubectl apply -f tiller-service-account.yaml
+    kubectl apply -f tiller-cluster-role-binding.yaml
+    helm init --service-account tiller
+EOF
+  }
+}
