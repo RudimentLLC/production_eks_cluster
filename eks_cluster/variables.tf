@@ -10,12 +10,12 @@ variable "aws_region" {
   default     = "us-west-2"
 }
 
-variable "aws_access_id" {
+variable "aws_access_key" {
   type        = "string"
   description = "The access id associated with an AWS user."
 }
 
-variable "aws_secret_access_key" {
+variable "aws_secret_key" {
   type        = "string"
   description = "The access key for the AWS access id."
 }
