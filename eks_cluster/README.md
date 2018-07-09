@@ -6,6 +6,7 @@ This example shows how one can integrate the [AWS VPC](https://registry.terrafor
 * [AWS Authentication](https://www.terraform.io/docs/providers/aws/index.html#authentication) setup on your local machine
 * [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) (>= v1.10.4) installed and in your local machine's PATH
 * [Heptio Authenticator](https://github.com/heptio/authenticator) (>= v0.3.0) installed and in your local machine's PATH
+* [Helm](https://github.com/kubernetes/helm) (>=v2.9.0) installed and in your local machine's PATH
 
 ## Walkthrough
 Run the following command(s) from this directory:
@@ -42,14 +43,6 @@ Do you want to perform these actions?
 ...
 
 Apply complete! Resources: 47 added, 0 changed, 0 destroyed.
-```
-
-4. Configure Kubectl
-```console
-$ export KUBECONFIG=~/.kube/config.eks
-$ cp kubeconfig $KUBECONFIG
-$ kubectl apply -f config-map-aws-auth.yaml
-configmap "aws-auth" configured
 ```
 
 # Cleanup 

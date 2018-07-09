@@ -36,3 +36,18 @@ module "eks" {
     Name = "${var.cluster_name}"
   }
 }
+
+resource "null_resource" "post-provision" {
+  # configure cluster, install Helm
+  provisioner "local-exec" {
+    command = <<EOF
+    export KUBECONFIG="$HOME/.kube/config.eks"
+    cp -f ./kubeconfig $KUBECONFIG
+    kubectl cluster-info
+    kubectl apply -f config-map-aws-auth.yaml
+    kubectl apply -f tiller-service-account.yaml
+    kubectl apply -f tiller-cluster-role-binding.yaml
+    helm init --service-account tiller
+EOF
+  }
+}
