@@ -38,20 +38,6 @@ module "eks" {
 }
 
 resource "null_resource" "post-provision" {
-  # wait for EKS cluster to be ready
-  provisioner "local-exec" {
-    environment {
-      EKS_CLUSTER = "${module.eks.cluster_id}"
-    }
-
-    command = <<EOF
-    until [ $( aws eks describe-cluster --cluster-name $EKS_CLUSTER | jq -r .cluster.status ) == ACTIVE ] ;
-    do echo "Waiting for EKS cluster $EKS_CLUSTER to be ready..." ;
-    sleep 20 ;
-    done
-EOF
-  }
-
   # configure cluster, install Helm
   provisioner "local-exec" {
     command = <<EOF
