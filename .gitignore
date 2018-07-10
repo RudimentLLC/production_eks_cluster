@@ -2,6 +2,7 @@
 *.tfstate*
 *.tfvars*
 *.log
+*.swp
 config-map-aws-auth.yaml
 kubeconfig
 
