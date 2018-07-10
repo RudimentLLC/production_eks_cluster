@@ -1,7 +1,6 @@
 variable "cluster_name" {
   type        = "string"
   description = "The name of the cluster and associated resources"
-  default     = "test"
 }
 
 variable "aws_region" {
