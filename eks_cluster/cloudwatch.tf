@@ -5,8 +5,8 @@ resource "aws_cloudwatch_log_group" "this" {
     command = <<EOF
     helm repo add iqvia 'https://raw.githubusercontent.com/nehayward/kubernetes-fluentd-cloudwatch/master/' &&
     helm install iqvia/fluentd-cloudwatch \
-    --set aws.id=${var.aws_access_key} \
-    --set aws.secret=${var.aws_secret_key} \
+    --set aws.access_key=${var.aws_access_key} \
+    --set aws.secret_key=${var.aws_secret_key} \
     --set aws.loggroup=${self.name} \
     --name fluentd
 EOF
