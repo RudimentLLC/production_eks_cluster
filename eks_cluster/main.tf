@@ -36,6 +36,8 @@ module "eks" {
 }
 
 resource "null_resource" "post-provision" {
+  depends_on = ["module.eks"]
+
   # configure cluster, install Helm
   provisioner "local-exec" {
     command = <<EOF
