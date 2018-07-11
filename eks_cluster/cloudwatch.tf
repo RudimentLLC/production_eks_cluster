@@ -11,4 +11,6 @@ resource "aws_cloudwatch_log_group" "this" {
     --name fluentd
 EOF
   }
+
+  depends_on = ["null_resource.post-provision"]
 }
