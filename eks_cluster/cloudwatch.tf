@@ -3,7 +3,7 @@ resource "aws_cloudwatch_log_group" "this" {
 
   provisioner "local-exec" {
     command = <<EOF
-    helm repo add iqvia 'https://raw.githubusercontent.com/nehayward/kubernetes-fluentd-cloudwatch/master/' &&
+    helm repo add iqvia 'https://raw.githubusercontent.com/nehayward/kubernetes-fluentd-cloudwatch/master/'
     helm install iqvia/fluentd-cloudwatch \
     --set aws.access_key=${var.aws_access_key} \
     --set aws.secret_key=${var.aws_secret_key} \
