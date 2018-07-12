@@ -49,7 +49,7 @@ resource "null_resource" "post-provision" {
     kubectl apply -f config-map-aws-auth.yaml
     kubectl apply -f tiller-service-account.yaml
     kubectl apply -f tiller-cluster-role-binding.yaml
-    helm init --service-account tiller
+    helm init --wait --service-account tiller
 EOF
   }
 }
