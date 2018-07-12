@@ -3,9 +3,8 @@ data "aws_availability_zones" "available" {}
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "1.14.0"
-
-  name = "${var.cluster_name}"
-  cidr = "10.0.0.0/16"
+  name    = "${var.cluster_name}"
+  cidr    = "10.0.0.0/16"
 
   azs = [
     "${data.aws_availability_zones.available.names[0]}",
@@ -25,9 +24,8 @@ module "vpc" {
 }
 
 module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = ">= 1.1.0"
-
+  source       = "terraform-aws-modules/eks/aws"
+  version      = ">= 1.1.0"
   cluster_name = "${var.cluster_name}"
   subnets      = "${module.vpc.public_subnets}"
   vpc_id       = "${module.vpc.vpc_id}"

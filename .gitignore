@@ -5,3 +5,8 @@
 *.swp
 config-map-aws-auth.yaml
 kubeconfig
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
