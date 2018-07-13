@@ -8,6 +8,7 @@ resource "null_resource" "sso" {
     helm install iqvia/eks-sso \
     --set auth0.connection=${var.auth0_connection} \
     --set auth0.client_id=${var.auth0_client_id} \  
+    --set image.tag=${var.sso_image_tag} \  
     --set sso.name=${self.name} \
     --name eks-sso
 EOF
