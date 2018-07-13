@@ -30,7 +30,7 @@ variable "auth0_client_id" {
   description = "The client id for Auth0."
 }
 
-variable "sso_image_tag" {
+variable "image_tag" {
   type        = "string"
   default     = "latest"
   description = "Image tag used for sso service."
