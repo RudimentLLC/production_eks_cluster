@@ -42,7 +42,7 @@ resource "null_resource" "post-provision" {
   provisioner "local-exec" {
     command = <<EOF
     export KUBECONFIG="$HOME/.kube/config.eks"
-    cp -f ./kubeconfig $KUBECONFIG
+    cp -f ./kubeconfig_${var.cluster_name} $KUBECONFIG
     kubectl cluster-info
     kubectl apply -f config-map-aws-auth.yaml
     kubectl apply -f tiller-service-account.yaml
