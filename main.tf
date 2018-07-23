@@ -35,19 +35,6 @@ module "eks" {
   }
 }
 
-resource "null_resource" "post-provision" {
-  depends_on = ["module.eks"]
-
-  # configure cluster, install Helm
-  provisioner "local-exec" {
-    command = <<EOF
-    export KUBECONFIG="$HOME/.kube/config.eks"
-    cp -f ./kubeconfig_${var.cluster_name} $KUBECONFIG
-    kubectl cluster-info
-    kubectl apply -f config-map-aws-auth.yaml
-    kubectl apply -f tiller-service-account.yaml
-    kubectl apply -f tiller-cluster-role-binding.yaml
-    helm init --wait --service-account tiller
-EOF
-  }
+resource "aws_cloudwatch_log_group" "this" {
+  name = "${var.cluster_name}"
 }
