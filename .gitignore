@@ -3,8 +3,8 @@
 *.tfvars*
 *.log
 *.swp
-config-map-aws-auth.yaml
-kubeconfig
+config-map-*
+kubeconfig*
 
 # macOS
 .DS_Store
