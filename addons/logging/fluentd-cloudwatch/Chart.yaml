@@ -1,0 +1,4 @@
+appVersion: "0.0.1"
+description: Send logs with fluentd to cloudwatch
+name: fluentd-cloudwatch
+version: 0.0.1
