@@ -14,11 +14,4 @@ install: check-env
 	$(MAKE) -C addons/etcd install
 	$(MAKE) -C addons/sso install
 
-uninstall:
-	$(MAKE) -C addons/helm uninstall
-	$(MAKE) -C addons/logging uninstall
-	$(MAKE) -C addons/prometheus uninstall
-	$(MAKE) -C addons/etcd uninstall
-	$(MAKE) -C addons/sso uninstall
-
-.PHONY: install uninstall
+.PHONY: install
