@@ -3,7 +3,7 @@ export PATH := .:$(PATH)
 
 KUBECONFIG?="~/.kube/config.eks"
 
-install: check-env
+install:
 	terraform apply
 	cp -f kubeconfig_* $(KUBECONFIG)
 	kubectl apply -f config-map-aws-auth_*.yaml
