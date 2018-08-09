@@ -14,18 +14,11 @@ delete_pods:
 	kubectl -n kube-system delete $(kubectl -n kube-system get pod -o name | grep dashboard)
 
 uninstall: 
-	kubectl -n kube-system delete service/kubernetes-dashboard --ignore-not-found
-	kubectl -n kube-system delete serviceaccount/kubernetes-dashboard --ignore-not-found
-	kubectl -n kube-system delete secret/kubernetes-dashboard-certs --ignore-not-found
-	kubectl -n kube-system delete role.rbac.authorization.k8s.io/kubernetes-dashboard-minimal --ignore-not-found
-	kubectl -n kube-system delete rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard-minimal --ignore-not-found
-	kubectl -n kube-system delete deployment.apps/kubernetes-dashboard --ignore-not-found
-	kubectl -n kube-system delete serviceaccount/heapster --ignore-not-found
-	kubectl -n kube-system delete deployment.extensions/heapster --ignore-not-found
-	kubectl -n kube-system delete service/heapster --ignore-not-found
-	kubectl -n kube-system delete deployment.extensions/monitoring-influxdb --ignore-not-found
-	kubectl -n kube-system delete service/monitoring-influxdb --ignore-not-found
-	kubectl -n kube-system delete clusterrolebinding.rbac.authorization.k8s.io/heapster --ignore-not-found
-	kubectl -n kube-system delete serviceaccount/eks-admin --ignore-not-found
+	kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml --ignore-not-found
+	kubectl delete -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml --ignore-not-found
+	kubectl delete -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml --ignore-not-found
+	kubectl delete -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/rbac/heapster-rbac.yaml --ignore-not-found
+	kubectl delete -f eks-admin-service-account.yaml --ignore-not-found
+	kubectl delete -f eks-admin-cluster-role-binding.yaml --ignore-not-found
 
 .PHONY: install uninstall delete_pods update
