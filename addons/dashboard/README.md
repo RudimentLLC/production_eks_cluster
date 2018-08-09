@@ -3,7 +3,7 @@
 Run the Makefile we've included to configure the [EKS Kubernetes Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html). 
 
 ```
-make dashboard
+make install
 ```
 
 After the Makefile finishes, you'll be presented with a `token` string:
