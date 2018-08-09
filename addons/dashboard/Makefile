@@ -5,7 +5,7 @@ install:
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/rbac/heapster-rbac.yaml
 	kubectl apply -f eks-admin-service-account.yaml
 	kubectl apply -f eks-admin-cluster-role-binding.yaml
-	get-token
+	@./get-token.sh
 
 # https://github.com/kubernetes/dashboard/wiki/Installation#update
 update: delete_pods
@@ -28,8 +28,4 @@ uninstall:
 	kubectl -n kube-system delete clusterrolebinding.rbac.authorization.k8s.io/heapster --ignore-not-found
 	kubectl -n kube-system delete serviceaccount/eks-admin --ignore-not-found
 
-get-token:
-	@./get-token.sh
-
-
-.PHONY: install uninstall delete_pods update get-token
+.PHONY: install uninstall delete_pods update
