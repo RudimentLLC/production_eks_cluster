@@ -32,4 +32,4 @@ You can delete the EKS cluster and all installed addons by running the following
 make uninstall
 ```
 
-*NOTE* `make uninstall` is not idempotent. If you encounter any errors during the uninstall process, you must manually uninstall any remaining addons, and then run `terraform destroy` to remove the remaining AWS resources. 
+*NOTE*: `make uninstall` is not idempotent. If you encounter any errors during the uninstall process, you must manually uninstall any remaining addons, and then run `terraform destroy` to remove the remaining AWS resources. 
