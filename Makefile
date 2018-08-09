@@ -1,5 +1,3 @@
-KUBECONFIG?="~/.kube/config.eks"
-
 tf_init: 
 	terraform init
 
@@ -10,16 +8,16 @@ tf_destroy:
 	terraform destroy
 
 set_kubeconfig:
-	$(shell cp -rf kubeconfig_* $(KUBECONFIG))
+	cat kubeconfig_* > $(KUBECONFIG)
 	kubectl apply -f config-map-aws-auth_*.yaml
 
 install: | tf_init tf_apply set_kubeconfig
 	$(MAKE) -C addons/helm install
-	$(MAKE) -C addons/dashboard install
 	$(MAKE) -C addons/logging install
 	$(MAKE) -C addons/prometheus install
 	$(MAKE) -C addons/sso install
 	$(MAKE) -C addons/etcd-operator install
+	$(MAKE) -C addons/dashboard install
 
 # WARNING: uninstall is not idempotent 
 # https://github.com/quintilesims/production_eks_cluster/issues/20

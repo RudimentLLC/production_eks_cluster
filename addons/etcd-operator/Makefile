@@ -1,6 +1,5 @@
 install:
 	helm upgrade --install etcd-operator stable/etcd-operator
-	@sleep 10
 	kubectl apply -f etcd-cluster.yaml
 
 uninstall:
