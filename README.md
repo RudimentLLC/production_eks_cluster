@@ -3,53 +3,33 @@ This example shows how one can integrate the [AWS VPC](https://registry.terrafor
 
 ## Requirements
 
+* MacOS or Linux is required locally; this workflow has not been tested nor will it be supported on Windows.
 * [AWS Authentication](https://www.terraform.io/docs/providers/aws/index.html#authentication) setup on your local machine
 * [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) (>= v1.10.4) installed and in your local machine's PATH
-* [Heptio Authenticator](https://github.com/heptio/authenticator) (>= v0.3.0) installed and in your local machine's PATH
-* [Helm](https://github.com/kubernetes/helm) (>=v2.9.0) installed and in your local machine's PATH
+* [Heptio Authenticator](https://github.com/heptio/authenticator) (>= v0.3.0) installed and in your local machine's PATH. Currently, this binary needs to be renamed to `aws-iam-authenticator` after being placed in your PATH.
+* [Helm](https://github.com/kubernetes/helm) (>=v2.9.0) installed and in your local machine's PATH.
+* The following environment variables must be set:
+  * `KUBECONFIG` - this tells `kubectl` where your configuration should reside. We recommend setting it to a value like `~/.kube/config.eks`.
+  * `AWS_ACCESS_KEY_ID` - your AWS access key.
+  * `AWS_SECRET_ACCESS_KEY` - your AWS secret access key.
+  * `LOG_GROUP_NAME` - the name for your cluster's log group in AWS Cloudwatch.
 
-## Walkthrough
-Run the following command(s) from this directory:
+## Installation
 
-1. Initialize Terraform
-```console
-$ terraform init
-Initializing modules
-- module.vpc
-- module.eks
-...
+Run the following command from this directory:
 
-Terraform has been successfully initialized!
+```
+make install
 ```
 
-2. Check the plan
-```console
-$ terraform plan
-...
+Installation takes roughly 10 minutes. At the end, you will be presented with a Kubernetes Dashboard token. Please see the [Dashboard README](addons/dashboard/README.md) for more details.
 
-Plan: 47 to add, 0 to change, 0 to destroy.
+## Clean Up
+
+You can delete the EKS cluster and all installed addons by running the following:
+
+```
+make uninstall
 ```
 
-3. Create the resources
-```console
-$ terraform apply
-...
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-...
-
-Apply complete! Resources: 47 added, 0 changed, 0 destroyed.
-```
-
-# Cleanup 
-Run the following command(s) from this directory:
-```console
-$ terraform destroy
-...
-
-Destroy complete! Resources: 47 destroyed.
-```
+*NOTE*: `make uninstall` is not idempotent. If you encounter any errors during the uninstall process, you must manually uninstall any remaining addons, and then run `terraform destroy` to remove the remaining AWS resources. 
