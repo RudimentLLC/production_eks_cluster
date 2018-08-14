@@ -1,6 +1,8 @@
 ## Enabling the Kubernetes Dashboard
 
 Run the Makefile we've included to configure the [EKS Kubernetes Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html). 
+If you've already ran `make install` from the root-level of this repo, you
+can skip this step.
 
 ```
 make install
