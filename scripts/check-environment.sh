@@ -3,16 +3,18 @@
 # This script is intended to be called with a few positional arguments:
 # $1: min kubectl version
 # $2: min helm version
+# $3: min tillerless helm version
 
 MIN_KUBECTL_VERSION="$1"
 MIN_HELM_VERSION="$2"
+MIN_LOCAL_TILLER_PLUGIN_VERSION="$3"
 
 ################################
 # CHECK BINARIES
 
-for BINARY in helm kubectl aws-iam-authenticator ; do
+for BINARY in "helm" "kubectl" "aws-iam-authenticator" ; do
     if ! [ -x "$(command -v ${BINARY})" ] ; then
-        echo "Could not find the '${BINARY}' binary in your \$PATH."
+        echo "Couldn't find the '${BINARY}' binary in your \$PATH."
         exit 1
     fi
 done
@@ -27,6 +29,14 @@ compare_versions() {
         exit 1
     fi
 }
+
+if [ "$(helm plugin list | grep tiller | awk '{ print $1 }')" == "" ]; then
+    echo "Couldn't find the local Tiller plugin."
+    exit 1
+fi
+
+CUR_LOCAL_TILLER_PLUGIN_VERSION=$(helm plugin list | grep tiller | awk '{ print $2 }')
+compare_versions "local tiller plugin" "${MIN_LOCAL_TILLER_PLUGIN_VERSION}" "${CUR_LOCAL_TILLER_PLUGIN_VERSION}"
 
 # Output from `kubectl version --short --client` looks like this:
 # Client Version: v1.11.2
