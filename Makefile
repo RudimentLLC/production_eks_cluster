@@ -30,7 +30,7 @@ install_addons:
 	$(MAKE) -C addons/etcd-operator install
 	$(MAKE) -C addons/dashboard install
 
-uninstall: | uninstall_addons tf_destroy tiller_uninstall
+uninstall: | tiller_uninstall tf_destroy
 
 tiller_uninstall:
 	helm tiller run -- bash -c 'cd $(CURDIR) ; make uninstall_addons'

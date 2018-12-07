@@ -18,3 +18,9 @@ variable "aws_region" {
   description = "The name of the AWS region to place resources."
   default     = "us-west-2"
 }
+
+variable "additional_userdata" {
+  type        = "string"
+  description = "Userdata to append to the default userdata of EKS worker groups."
+  default     = ""
+}
