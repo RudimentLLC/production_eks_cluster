@@ -2,7 +2,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "1.14.0"
+  version = "1.46.0"
   name    = "${var.cluster_name}"
   cidr    = "10.0.0.0/16"
 
@@ -23,12 +23,23 @@ module "vpc" {
   }
 }
 
+locals {
+  worker_groups = [
+    {
+      instance_type       = "m4.large"
+      additional_userdata = "${var.additional_userdata}"
+      subnets             = "${join(",", module.vpc.private_subnets)}"
+    },
+  ]
+}
+
 module "eks" {
-  source       = "terraform-aws-modules/eks/aws"
-  version      = "1.3.0"
-  cluster_name = "${var.cluster_name}"
-  subnets      = "${module.vpc.public_subnets}"
-  vpc_id       = "${module.vpc.vpc_id}"
+  source        = "terraform-aws-modules/eks/aws"
+  version       = "1.7.0"
+  cluster_name  = "${var.cluster_name}"
+  subnets       = "${module.vpc.public_subnets}"
+  worker_groups = "${local.worker_groups}"
+  vpc_id        = "${module.vpc.vpc_id}"
 
   tags = {
     Name = "${var.cluster_name}"

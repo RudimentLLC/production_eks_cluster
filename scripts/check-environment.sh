@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # This script is intended to be called with a few positional arguments:
 # $1: min kubectl version
@@ -23,10 +23,18 @@ compare_versions() {
     BINARY=$1
     MIN=$2
     CUR=$3
-    NEWEST="$(printf "%s\n" "$MIN" "$CUR" | sort -nr | head -n1)"
-    if [ \( "$NEWEST" == "$MIN" \) -a \( "$MIN" != "$CUR" \) ] ; then
-        echo "Local '${BINARY}' is version ${CUR}. The minimum required version is ${MIN}."
-        exit 1
+
+    if [ "$(uname)" == "Darwin" ]; then
+        NEWEST="$(printf "%s\n" "$MIN\n" "$CUR" | sort -nr | head -n1)"
+        if [ \( "$NEWEST" == "$MIN" \) -a \( "$MIN" != "$CUR" \) ] ; then
+            echo "Local '${BINARY}' is version ${CUR}. The minimum required version is ${MIN}."
+            exit 1
+        fi
+    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+        if ! [ "$MIN" = `printf "$MIN\n$CUR" | sort -V | head -n1` ] ; then
+            echo "Local '${BINARY}' is version ${CUR}. The minimum required version is ${MIN}."
+            exit 1
+        fi
     fi
 }
 
