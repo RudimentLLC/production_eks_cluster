@@ -18,7 +18,7 @@ module "vpc" {
   single_nat_gateway = true
 
   tags = {
-    Name                                        = "${var.cluster_name}"
+    Environment                                 = "${var.cluster_name}"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 }
@@ -26,26 +26,45 @@ module "vpc" {
 locals {
   worker_groups = [
     {
-      instance_type       = "m4.large"
-      additional_userdata = "${var.additional_userdata}"
-      subnets             = "${join(",", module.vpc.private_subnets)}"
+      instance_type         = "t3.medium"
+      additional_userdata   = "${var.additional_userdata}"
+      subnets               = "${join(",", module.vpc.private_subnets)}"
+      asg_max_size          = 5
+      autoscaling_enabled   = "true"
+      protect_from_scale_in = "true"
     },
   ]
+
+  tags = {
+    Environment = "${var.cluster_name}"
+    Workspace   = "${terraform.workspace}"
+  }
 }
 
 module "eks" {
   source        = "terraform-aws-modules/eks/aws"
-  version       = "1.7.0"
+  version       = "2.2.0"
   cluster_name  = "${var.cluster_name}"
   subnets       = "${module.vpc.public_subnets}"
   worker_groups = "${local.worker_groups}"
   vpc_id        = "${module.vpc.vpc_id}"
-
-  tags = {
-    Name = "${var.cluster_name}"
-  }
+  tags          = "${local.tags}"
 }
 
 resource "aws_cloudwatch_log_group" "this" {
   name = "${var.cluster_name}"
+}
+
+data "template_file" "autoscaling_config" {
+  template = "${file("${path.module}/addons/autoscaling/values-template.yaml")}"
+
+  vars = {
+    aws_region   = "${var.aws_region}"
+    cluster_name = "${var.cluster_name}"
+  }
+}
+
+resource "local_file" "autoscaling_config_rendered" {
+  content  = "${data.template_file.autoscaling_config.rendered}"
+  filename = "${path.module}/addons/autoscaling/values.yaml"
 }

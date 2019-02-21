@@ -1,11 +1,12 @@
 install: check
-	helm upgrade --install fluentd ./fluentd-cloudwatch-0.0.1.tgz \
-		--set aws.access_key="$(AWS_ACCESS_KEY_ID)" \
-		--set aws.secret_key="$(AWS_SECRET_ACCESS_KEY)" \
-		--set aws.loggroup="$(LOG_GROUP_NAME)"
+	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
+	helm upgrade --install fluentd-cloudwatch incubator/fluentd-cloudwatch \
+		--set awsAccessKeyId="$(AWS_ACCESS_KEY_ID)" \
+		--set awsSecretAccessKey="$(AWS_SECRET_ACCESS_KEY)" \
+		--set logGroupName="$(LOG_GROUP_NAME)"
 
 uninstall:
-	helm del --purge fluentd
+	-helm delete --purge fluentd-cloudwatch
 
 check: 
 ifeq ($(and $(AWS_ACCESS_KEY_ID),$(AWS_SECRET_ACCESS_KEY),$(LOG_GROUP_NAME)),)

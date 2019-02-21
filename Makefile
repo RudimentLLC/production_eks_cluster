@@ -24,10 +24,12 @@ tiller_install:
 	helm tiller run -- bash -c 'cd $(CURDIR) ; make install_addons'
 
 install_addons:
+	$(MAKE) -C addons/autoscaling install
 	$(MAKE) -C addons/logging install
 	$(MAKE) -C addons/prometheus install
-	$(MAKE) -C addons/sso install
 	$(MAKE) -C addons/etcd-operator install
+	$(MAKE) -C addons/autoscaling install
+	$(MAKE) -C addons/minio install
 	$(MAKE) -C addons/dashboard install
 
 uninstall: | tiller_uninstall tf_destroy
@@ -36,10 +38,11 @@ tiller_uninstall:
 	helm tiller run -- bash -c 'cd $(CURDIR) ; make uninstall_addons'
 
 uninstall_addons:
-	$(MAKE) -C addons/sso uninstall
 	$(MAKE) -C addons/prometheus uninstall
 	$(MAKE) -C addons/logging uninstall
 	$(MAKE) -C addons/etcd-operator uninstall
+	$(MAKE) -C addons/minio uninstall
 	$(MAKE) -C addons/dashboard uninstall
+	$(MAKE) -C addons/autoscaling uninstall
 
 .PHONY: install tiller_install install_addons uninstall tiller_uninstall uninstall_addons tf_apply tf_init set_kubeconfig tf_destroy
