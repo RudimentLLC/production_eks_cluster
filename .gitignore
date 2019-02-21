@@ -10,3 +10,5 @@ kubeconfig*
 .DS_Store
 .AppleDouble
 .LSOverride
+.vscode
+.ropeproject

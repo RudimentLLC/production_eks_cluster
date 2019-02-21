@@ -1,11 +1,7 @@
 install:
-	kubectl apply -f storage_class.yaml
-	helm upgrade --install prometheus stable/prometheus \
-		--set alertmanager.persistentVolume.storageClass=gp2 \
-		--set server.persistentVolume.storageClass=gp2
+	helm upgrade --install prometheus-eks stable/prometheus
 
 uninstall:
-	kubectl delete -f storage_class.yaml --ignore-not-found
-	helm delete --purge prometheus	
+	-helm delete --purge prometheus-eks
 
 .PHONY: install uninstall
