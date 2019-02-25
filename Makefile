@@ -18,7 +18,10 @@ set_kubeconfig:
 	cat kubeconfig_* > $(KUBECONFIG)
 	kubectl apply -f config-map-aws-auth_*.yaml
 
-install: | check_environment tf_init tf_apply set_kubeconfig tiller_install
+install: | check_environment helm_update tf_init tf_apply set_kubeconfig tiller_install
+
+helm_update:
+	helm repo update
 
 tiller_install:
 	helm tiller run -- bash -c 'cd $(CURDIR) ; make install_addons'
@@ -45,4 +48,4 @@ uninstall_addons:
 	$(MAKE) -C addons/dashboard uninstall
 	$(MAKE) -C addons/autoscaling uninstall
 
-.PHONY: install tiller_install install_addons uninstall tiller_uninstall uninstall_addons tf_apply tf_init set_kubeconfig tf_destroy
+.PHONY: install tiller_install helm_update install_addons uninstall tiller_uninstall uninstall_addons tf_apply tf_init set_kubeconfig tf_destroy
