@@ -10,10 +10,9 @@ This example shows how one can integrate the [AWS VPC](https://registry.terrafor
 * [Helm](https://github.com/kubernetes/helm) (>=v2.9.0) installed and in your local machine's PATH.
 * [Local Tiller plugin](https://github.com/rimusz/helm-tiller) for Helm installed, and port 44134 available.
 * The following environment variables must be set:
-  * `KUBECONFIG` - this tells `kubectl` where your configuration should reside. We recommend setting it to a value like `~/.kube/config.eks`.
+  * `KUBECONFIG` - this tells `kubectl` where your configuration should reside. We recommend setting it to a value like `$HOME/.kube/config.eks`.
   * `AWS_ACCESS_KEY_ID` - your AWS access key.
   * `AWS_SECRET_ACCESS_KEY` - your AWS secret access key.
-  * `LOG_GROUP_NAME` - the name for your cluster's log group in AWS Cloudwatch.
 
 ### A Note on the local Tiller plugin
 This configuration elects to _not_ install Tiller into the k8s cluster for a couple of reasons: it removes the need for trying to protect and restrict a service account for Tiller, and it's closer to the workflow of the future Helm 3 which will be Tillerless by design and talk directly to the k8s API.  
