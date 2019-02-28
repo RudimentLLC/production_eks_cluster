@@ -29,7 +29,9 @@ locals {
       instance_type         = "t3.medium"
       additional_userdata   = "${var.additional_userdata}"
       subnets               = "${join(",", module.vpc.private_subnets)}"
-      asg_max_size          = 5
+      asg_desired_count     = 2
+      asg_min_size          = 2
+      asg_max_size          = 10
       autoscaling_enabled   = "true"
       protect_from_scale_in = "false"
     },
@@ -52,7 +54,7 @@ module "eks" {
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  name = "${var.cluster_name}"
+  name = "${var.cluster_name}-eks-logs"
 }
 
 data "template_file" "autoscaling_config" {
@@ -67,4 +69,36 @@ data "template_file" "autoscaling_config" {
 resource "local_file" "autoscaling_config_rendered" {
   content  = "${data.template_file.autoscaling_config.rendered}"
   filename = "${path.module}/addons/autoscaling/values.yaml"
+}
+
+data "template_file" "minio_config" {
+  template = "${file("${path.module}/addons/minio/values-template.yaml")}"
+
+  vars = {
+    aws_region     = "${var.aws_region}"
+    cluster_name   = "${var.cluster_name}"
+    aws_access_key = "${var.aws_access_key}"
+    aws_secret_key = "${var.aws_secret_key}"
+  }
+}
+
+resource "local_file" "minio_config_rendered" {
+  content  = "${data.template_file.minio_config.rendered}"
+  filename = "${path.module}/addons/minio/values.yaml"
+}
+
+data "template_file" "logging_config" {
+  template = "${file("${path.module}/addons/logging/values-template.yaml")}"
+
+  vars = {
+    aws_region     = "${var.aws_region}"
+    cluster_name   = "${var.cluster_name}"
+    aws_access_key = "${var.aws_access_key}"
+    aws_secret_key = "${var.aws_secret_key}"
+  }
+}
+
+resource "local_file" "logging_config_rendered" {
+  content  = "${data.template_file.logging_config.rendered}"
+  filename = "${path.module}/addons/logging/values.yaml"
 }

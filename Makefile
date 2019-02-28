@@ -21,6 +21,7 @@ set_kubeconfig:
 install: | check_environment helm_update tf_init tf_apply set_kubeconfig tiller_install
 
 helm_update:
+	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
 	helm repo update
 
 tiller_install:
