@@ -3,7 +3,7 @@ data "aws_availability_zones" "available" {}
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "1.57.0"
-  name    = "${var.cluster_name}"
+  name    = "${var.eks_cluster_name}"
   cidr    = "10.0.0.0/16"
 
   azs = [
@@ -18,8 +18,8 @@ module "vpc" {
   single_nat_gateway = true
 
   tags = {
-    Environment                                 = "${var.cluster_name}"
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    Environment                                 = "${var.eks_cluster_name}"
+    "kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
   }
 }
 
@@ -38,7 +38,7 @@ locals {
   ]
 
   tags = {
-    Environment = "${var.cluster_name}"
+    Environment = "${var.eks_cluster_name}"
     Workspace   = "${terraform.workspace}"
   }
 }
@@ -46,7 +46,7 @@ locals {
 module "eks" {
   source        = "terraform-aws-modules/eks/aws"
   version       = "2.2.1"
-  cluster_name  = "${var.cluster_name}"
+  cluster_name  = "${var.eks_cluster_name}"
   subnets       = "${module.vpc.public_subnets}"
   worker_groups = "${local.worker_groups}"
   vpc_id        = "${module.vpc.vpc_id}"
@@ -54,12 +54,12 @@ module "eks" {
 
   kubeconfig_aws_authenticator_additional_args = [
     "-r",
-    "${var.terraform_iam_role_arn}",
+    "${var.terraform_admin_role_arn}",
   ]
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  name = "${var.cluster_name}-eks-logs"
+  name = "${var.eks_cluster_name}-eks-logs"
 }
 
 data "template_file" "autoscaling_config" {
@@ -67,7 +67,7 @@ data "template_file" "autoscaling_config" {
 
   vars = {
     aws_region   = "${var.aws_region}"
-    cluster_name = "${var.cluster_name}"
+    eks_cluster_name = "${var.eks_cluster_name}"
   }
 }
 
@@ -81,9 +81,9 @@ data "template_file" "minio_config" {
 
   vars = {
     aws_region     = "${var.aws_region}"
-    cluster_name   = "${var.cluster_name}"
-    aws_access_key = "${var.aws_access_key}"
-    aws_secret_key = "${var.aws_secret_key}"
+    eks_cluster_name   = "${var.eks_cluster_name}"
+    aws_access_key_id = "${var.aws_access_key_id}"
+    aws_secret_access_key = "${var.aws_secret_access_key}"
   }
 }
 
@@ -97,9 +97,9 @@ data "template_file" "logging_config" {
 
   vars = {
     aws_region     = "${var.aws_region}"
-    cluster_name   = "${var.cluster_name}"
-    aws_access_key = "${var.aws_access_key}"
-    aws_secret_key = "${var.aws_secret_key}"
+    eks_cluster_name   = "${var.eks_cluster_name}"
+    aws_access_key_id = "${var.aws_access_key_id}"
+    aws_secret_access_key = "${var.aws_secret_access_key}"
   }
 }
 

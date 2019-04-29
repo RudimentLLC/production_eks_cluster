@@ -7,5 +7,5 @@ cloudProvider: aws
 awsRegion: ${aws_region}
 
 autoDiscovery:
-  clusterName: ${cluster_name}
+  clusterName: ${eks_cluster_name}
   enabled: true

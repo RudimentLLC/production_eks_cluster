@@ -1,8 +1,8 @@
-variable "aws_access_key" {
+variable "aws_access_key_id" {
   type = "string"
 }
 
-variable "aws_secret_key" {
+variable "aws_secret_access_key" {
   type = "string"
 }
 
@@ -11,7 +11,7 @@ variable "aws_region" {
   default = "us-west-2"
 }
 
-variable "cluster_name" {
+variable "eks_cluster_name" {
   type = "string"
 }
 

@@ -5,20 +5,34 @@ MIN_HELM_VERSION="2.9.0"
 MIN_TILLERLESS_HELM_VERSION="0.2.3"
 
 
-install: check_environment helm_update tf_init tf_apply set_kubeconfig tiller_install
+install: check_helm_environment helm_update tf_init tf_apply set_kubeconfig tiller_install
 
 uninstall: tiller_uninstall tf_destroy
 
-check_environment:
-	./scripts/check-environment.sh ${MIN_KUBECTL_VERSION} ${MIN_HELM_VERSION} ${MIN_TILLERLESS_HELM_VERSION}
+check_helm_environment:
+	./scripts/check-helm-environment.bash ${MIN_KUBECTL_VERSION} ${MIN_HELM_VERSION} ${MIN_TILLERLESS_HELM_VERSION}
+
+check_tfadmin_environment:
+	./scripts/check-tfadmin-environment.bash
+
+check_tf_environment:
+	./scripts/check-tf-environment.bash
 
 helm_update:
 	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
 	helm repo update
 
-tf_admin_create:
+tf_admin_create: check_tfadmin_environment
+	echo "eks_cluster_name = \"$${EKS_CLUSTER_NAME}\"" > terraform-admin/terraform.tfvars
+	echo "aws_access_key_id = \"$${AWS_ACCESS_KEY_ID}\"" >> terraform-admin/terraform.tfvars
+	echo "aws_secret_access_key = \"$${AWS_SECRET_ACCESS_KEY}\"" >> terraform-admin/terraform.tfvars
+
 	$(MAKE) -C terraform-admin/ init
 	$(MAKE) -C terraform-admin/ create
+
+	@$(MAKE) -C terraform-admin/ output > terraform/terraform.tfvars
+	echo "aws_access_key_id = \"$${AWS_ACCESS_KEY_ID}\"" >> terraform/terraform.tfvars
+	echo "aws_secret_access_key = \"$${AWS_SECRET_ACCESS_KEY}\"" >> terraform/terraform.tfvars
 
 tf_admin_destroy:
 	$(MAKE) -C terraform-admin/ destroy
@@ -29,10 +43,10 @@ tf_admin_output:
 tf_init: 
 	$(MAKE) -C terraform/ init
 
-tf_plan:
+tf_plan: check_tf_environment
 	$(MAKE) -C terraform/ plan
 
-tf_apply:
+tf_apply: check_tf_environment
 	$(MAKE) -C terraform/ apply
 
 tf_destroy:
