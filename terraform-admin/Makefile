@@ -13,4 +13,7 @@ destroy:
 output:
 	terraform output
 
-.PHONY: init create destroy output
+clean:
+	rm -rf ./.terraform
+
+.PHONY: init create destroy output clean

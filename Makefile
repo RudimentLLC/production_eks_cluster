@@ -67,4 +67,10 @@ uninstall_addons:
 	$(MAKE) -C addons/dashboard/ uninstall
 	$(MAKE) -C addons/autoscaling/ uninstall
 
-.PHONY: install uninstall check_environment helm_update tf_admin_create tf_admin_destroy tf_admin_output tf_init tf_plan tf_apply tf_destroy tf_output set_kubeconfig tiller_install tiller_uninstall install_addons uninstall_addons
+clean: uninstall tf_admin_destroy
+	$(MAKE) -C terraform-admin/ clean
+	$(MAKE) -C terraform/ clean
+	rm -rf ./.terraform
+
+
+.PHONY: install uninstall check_environment helm_update tf_admin_create tf_admin_destroy tf_admin_output tf_init tf_plan tf_apply tf_destroy tf_output set_kubeconfig tiller_install tiller_uninstall install_addons uninstall_addons clean

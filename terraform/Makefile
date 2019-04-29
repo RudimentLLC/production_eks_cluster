@@ -42,4 +42,7 @@ destroy:
 output:
 	terraform output
 
-.PHONY: init init-r plan apply destroy output
+clean:
+	rm -rf ./.terraform
+
+.PHONY: init init-r plan apply destroy output clean
