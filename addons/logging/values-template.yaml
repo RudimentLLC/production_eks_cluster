@@ -46,9 +46,9 @@ podAnnotations: {}
 
 awsRegion: ${aws_region}
 awsRole:
-awsAccessKeyId: ${aws_access_key}
-awsSecretAccessKey: ${aws_secret_key}
-logGroupName: ${cluster_name}-eks-logs
+awsAccessKeyId: ${aws_access_key_id}
+awsSecretAccessKey: ${aws_secret_access_key}
+logGroupName: ${eks_cluster_name}-eks-logs
 
 rbac:
   ## If true, create and use RBAC resources
@@ -187,7 +187,7 @@ fluentdConfig: |
   </filter>
   <match **>
     type cloudwatch_logs
-    log_group_name "${cluster_name}-eks-logs"
+    log_group_name "${eks_cluster_name}-eks-logs"
     auto_create_stream true
     use_tag_as_stream true
   </match>

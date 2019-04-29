@@ -11,36 +11,21 @@ This example shows how one can integrate the [AWS VPC](https://registry.terrafor
 - [Helm](https://github.com/kubernetes/helm) (>=v2.9.0) installed and in your local machine's PATH.
 - [Local Tiller plugin](https://github.com/rimusz/helm-tiller) for Helm installed, and port 44134 available.
 - Configured Variables:
-  - Some of these are environment variables, and some are Terraform variables. Environment variables can be set with `export VARNAME=value`, and Terraform files can be specified in a few different ways: manually when Terraform prompts you, as `var_name = "value"` in a `terraform.tfvars` file, or as environment variables via `export TF_VAR_var_name=value`.
+    - Some of these variables are used by Helm, and some are used by Terraform.
+    To prevent needing to set variables twice, we've opted to set them all only once as environment variables, and then translate as needed into Terraform variables, etc. behind the scenes.
+    - Note the `tf_admin` column - this indicates whether the variable is generated as part of `make tf_admin_create`.
 
-| Variable                       | Type        | Required?   | Description                                                                                                                                                                 |
-| ------------------------------ | ----------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `KUBECONFIG`                   | Environment | Required    | Tells `kubectl` where your configuration should reside. We recommend setting it to a value like `$HOME/.kube/config.eks`.                                                   |
-| `AWS_ACCESS_KEY_ID`            | Environment | Required    | Your AWS access key.                                                                                                                                                        |
-| `AWS_SECRET_ACCESS_KEY`        | Environment | Required    | Your AWS secret access key.                                                                                                                                                 |
-| `TERRAFORM_ADMIN_ROLE_ARN`     | Environment | Recommended | The ARN of the AWS IAM role that Terraform will use to provision AWS resources. This value will be output after creating Terraform admin resources.                         |
-| `REMOTE_STATE_BUCKET_NAME`     | Environment | Recommended | The name of the AWS S3 bucket that will be used to store Terraform state remotely. This value will be output after creating Terraform admin resources.                      |
-| `REMOTE_STATE_LOCK_TABLE_NAME` | Environment | Recommended | The name of the AWS DynamoDB table that will be used to provide locking for Terraform state management. This value will be output after creating Terraform admin resources. |
-| `REMOTE_STATE_KEY`             | Environment | Optional    | The name of the path in the S3 bucket at which remote state will be stored. Defaults to `terraform/eks/tfstate`.                                                            |
-| `REMOTE_STATE_BUCKET_REGION`   | Environment | Optional    | The region in which the remote state S3 bucket will be created. Defaults to `us-west-2`.                                                                                    |
-| `cluster_name`                 | Terraform   | Required    | The desired name for the EKS cluster.                                                                                                                                       |
-| `terraform_iam_role_arn`       | Terraform   | Required    | The ARN of the AWS IAM role that Terraform will use to manage AWS resources.                                                                                                |
-| `aws_access_key`               | Terraform   | Required    | Your AWS access key. Used by the minio addon.                                                                                                                               |
-| `aws_secret_key`               | Terraform   | Required    | Your AWS secret access key. Used by the minio addon.                                                                                                                        |
-
-### A Note on "Recommended" Variables
-
-Our recommended deployment strategy involves the creation of "Terraform Admin" resources: an AWS IAM role that Terraform will use to manage AWS resources, and an AWS S3 bucket and DynamoDB table to work with Terraform state files remotely.
-The former increases the security of your account by limiting Terraform's permissions to those defined within the IAM role, and the latter elminates issues and headaches that stem from keeping your deployment infrastructure files on your local machine.
-
-The installation instructions below will go into more detail, but the general workflow is this:
-
-1. Set "Required" variables and create the Terraform Admin resources
-2. Use the outputs from creating Terraform Admin resources to set "Recommended" variables
-3. Create the EKS resources
-
-Our instructions proceed according to this recommendation, but if you don't want to make use of them, you don't have to.
-You can ignore any instructions geared towards topics like "first run" or "terraform admin," and you can avoid the use of `make` targets that rely upon this administrative infrastructure in favor of running the Terraform commands yourself.
+| Variable                       | tf_admin    | Description                                                                                                                                                                 |
+| ------------------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `KUBECONFIG`                   | | Tells `kubectl` where your configuration should reside. We recommend setting it to a value like `$HOME/.kube/config.eks`.                                                   |
+| `AWS_ACCESS_KEY_ID`            | | The ID of your AWS access key.                                                                                                                                                        |
+| `AWS_SECRET_ACCESS_KEY`        | | Your AWS secret access key.                                                                                                                                                 |
+| `EKS_CLUSTER_NAME`             | | The name of your EKS cluster. |
+| `TERRAFORM_ADMIN_ROLE_ARN`     | Yes | The ARN of the AWS IAM role that Terraform will use to provision AWS resources. This value will be output after creating Terraform admin resources.                         |
+| `REMOTE_STATE_BUCKET_NAME`     | Yes | The name of the AWS S3 bucket that will be used to store Terraform state remotely. This value will be output after creating Terraform admin resources.                      |
+| `REMOTE_STATE_LOCK_TABLE_NAME` | Yes | The name of the AWS DynamoDB table that will be used to provide locking for Terraform state management. This value will be output after creating Terraform admin resources. |
+| `REMOTE_STATE_KEY`             | | **_Optional._** The name of the path in the S3 bucket at which remote state will be stored. Defaults to `terraform/eks/tfstate`.                                                            |
+| `REMOTE_STATE_BUCKET_REGION`   | | **_Optional._** The region in which the remote state S3 bucket will be created. Defaults to `us-west-2`.                                                                                    |
 
 ### A Note on the local Tiller plugin
 
@@ -57,7 +42,8 @@ We feel that it's important to get accustomed to the workflow of not installing 
 First, you should create the Terraform Admin resources, which will be used by the Terraform configuration that later stands up the EKS infrastructure.
 If you have already created the Terraform Admin IAM role, the remote state S3 bucket, and the state lock DynamoDB table, you can skip to the [Provision EKS Resources](#provision-admin-resources) step.
 
-Run the following command from this directory:
+Set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `EKS_CLUSTER_NAME` environment variables.
+Then, run the following command from this directory:
 
 ```
 make tf_admin_create

@@ -40,7 +40,7 @@ destroy:
 	rm -rf ./.terraform
 
 output:
-	terraform output
+	@terraform output
 
 clean:
 	rm -rf ./.terraform

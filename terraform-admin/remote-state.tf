@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "remote_state_bucket" {
-  bucket        = "${var.cluster_name}-remote-state"
+  bucket        = "${var.eks_cluster_name}-remote-state"
   acl           = "${var.s3_bucket_acl}"
   region        = "${var.aws_region}"
   force_destroy = true
@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "remote_state_bucket" {
     enabled = "${var.s3_bucket_versioning}"
   }
   tags = {
-    Name = "${var.cluster_name}"
+    Name = "${var.eks_cluster_name}"
   }
 }
 
@@ -22,7 +22,7 @@ resource "aws_s3_bucket_public_access_block" "remote_state_bucket_access" {
 }
 
 resource "aws_dynamodb_table" "remote_state_lock_table" {
-  name           = "${var.cluster_name}-remote-state-lock-table"
+  name           = "${var.eks_cluster_name}-remote-state-lock-table"
   read_capacity  = 1
   write_capacity = 1
   hash_key       = "LockID"

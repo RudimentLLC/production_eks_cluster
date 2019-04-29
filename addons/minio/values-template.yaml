@@ -42,8 +42,8 @@ priorityClassName: ""
 ## Distributed Minio ref: https://docs.minio.io/docs/distributed-minio-quickstart-guide
 ##
 existingSecret: ""
-accessKey: ${aws_access_key}
-secretKey: ${aws_secret_key}
+accessKey: ${aws_access_key_id}
+secretKey: ${aws_secret_access_key}
 configPath: "/root/.minio/"
 configPathmc: "/root/.mc/"
 mountPath: "/export"
@@ -151,7 +151,7 @@ resources:
 defaultBucket:
   enabled: false
   ## If enabled, must be a string with length > 0
-  name: ${cluster_name}-minio
+  name: ${eks_cluster_name}-minio
   ## Can be one of none|download|upload|public
   policy: none
   ## Purge if bucket exists already

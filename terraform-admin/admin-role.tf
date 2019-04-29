@@ -1,7 +1,7 @@
 resource "aws_iam_role" "terraform_admin_role" {
-  name                  = "${var.cluster_name}-terraform-admin"
+  name                  = "${var.eks_cluster_name}-terraform-admin"
   force_detach_policies = true
-  description           = "Allows Terraform to manage AWS resources for the '${var.cluster_name}' EKS cluster."
+  description           = "Allows Terraform to manage AWS resources for the '${var.eks_cluster_name}' EKS cluster."
 
   assume_role_policy = <<EOF
 {
@@ -20,13 +20,13 @@ resource "aws_iam_role" "terraform_admin_role" {
 EOF
 
   tags = {
-    Name = "${var.cluster_name}"
+    Name = "${var.eks_cluster_name}"
   }
 }
 
 resource "aws_iam_policy" "terraform_admin_policy" {
-  name        = "${var.cluster_name}-terraform-admin"
-  description = "Allows Terraform to manage AWS resources for the '${var.cluster_name}' EKS cluster."
+  name        = "${var.eks_cluster_name}-terraform-admin"
+  description = "Allows Terraform to manage AWS resources for the '${var.eks_cluster_name}' EKS cluster."
 
   policy = <<EOF
 {
@@ -43,7 +43,7 @@ EOF
 }
 
 resource "aws_iam_policy_attachment" "terraform_admin_policy_attachment" {
-  name       = "${var.cluster_name}-terraform-admin"
+  name       = "${var.eks_cluster_name}-terraform-admin"
   roles      = ["${aws_iam_role.terraform_admin_role.name}"]
   policy_arn = "${aws_iam_policy.terraform_admin_policy.arn}"
 }

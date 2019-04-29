@@ -11,7 +11,7 @@ destroy:
 	rm -rf ./.terraform *tfstate*
 
 output:
-	terraform output
+	@terraform output
 
 clean:
 	rm -rf ./.terraform
