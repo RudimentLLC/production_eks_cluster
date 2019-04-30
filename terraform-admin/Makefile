@@ -8,12 +8,15 @@ create:
 
 destroy:
 	terraform destroy -force
-	rm -rf ./.terraform *tfstate*
 
 output:
 	@terraform output
 
 clean:
-	rm -rf ./.terraform
+	rm -rf \
+		./.terraform \
+		./terraform.tfstate \
+		./terraform.tfstate.backup \
+		./terraform.tfvars
 
 .PHONY: init create destroy output clean
