@@ -43,6 +43,8 @@ output:
 	@terraform output
 
 clean:
-	rm -rf ./.terraform
+	rm -rf \
+		./.terraform \
+		./terraform.tfvars
 
 .PHONY: init init-r plan apply destroy output clean
