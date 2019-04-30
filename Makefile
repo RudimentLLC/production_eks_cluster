@@ -70,14 +70,12 @@ install_addons:
 	$(MAKE) -C addons/logging/ install
 	$(MAKE) -C addons/prometheus/ install
 	$(MAKE) -C addons/etcd-operator/ install
-	$(MAKE) -C addons/minio/ install
 	$(MAKE) -C addons/dashboard/ install
 
 uninstall_addons:
 	$(MAKE) -C addons/prometheus/ uninstall
 	$(MAKE) -C addons/logging/ uninstall
 	$(MAKE) -C addons/etcd-operator/ uninstall
-	$(MAKE) -C addons/minio/ uninstall
 	$(MAKE) -C addons/dashboard/ uninstall
 	$(MAKE) -C addons/autoscaling/ uninstall
 

@@ -2,7 +2,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "1.57.0"
+  version = "1.64.0"
   name    = "${var.eks_cluster_name}"
   cidr    = "10.0.0.0/16"
 
@@ -18,7 +18,7 @@ module "vpc" {
   single_nat_gateway = true
 
   tags = {
-    Environment                                 = "${var.eks_cluster_name}"
+    Environment                                     = "${var.eks_cluster_name}"
     "kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
   }
 }
@@ -44,13 +44,14 @@ locals {
 }
 
 module "eks" {
-  source        = "terraform-aws-modules/eks/aws"
-  version       = "2.2.1"
-  cluster_name  = "${var.eks_cluster_name}"
-  subnets       = "${module.vpc.public_subnets}"
-  worker_groups = "${local.worker_groups}"
-  vpc_id        = "${module.vpc.vpc_id}"
-  tags          = "${local.tags}"
+  source                    = "terraform-aws-modules/eks/aws"
+  version                   = "3.0.0"
+  cluster_name              = "${var.eks_cluster_name}"
+  subnets                   = "${module.vpc.public_subnets}"
+  worker_groups             = "${local.worker_groups}"
+  vpc_id                    = "${module.vpc.vpc_id}"
+  tags                      = "${local.tags}"
+  cluster_enabled_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   kubeconfig_aws_authenticator_additional_args = [
     "-r",
@@ -66,7 +67,7 @@ data "template_file" "autoscaling_config" {
   template = "${file("${path.module}/../addons/autoscaling/values-template.yaml")}"
 
   vars = {
-    aws_region   = "${var.aws_region}"
+    aws_region       = "${var.aws_region}"
     eks_cluster_name = "${var.eks_cluster_name}"
   }
 }
@@ -80,9 +81,9 @@ data "template_file" "minio_config" {
   template = "${file("${path.module}/../addons/minio/values-template.yaml")}"
 
   vars = {
-    aws_region     = "${var.aws_region}"
-    eks_cluster_name   = "${var.eks_cluster_name}"
-    aws_access_key_id = "${var.aws_access_key_id}"
+    aws_region            = "${var.aws_region}"
+    eks_cluster_name      = "${var.eks_cluster_name}"
+    aws_access_key_id     = "${var.aws_access_key_id}"
     aws_secret_access_key = "${var.aws_secret_access_key}"
   }
 }
@@ -96,9 +97,9 @@ data "template_file" "logging_config" {
   template = "${file("${path.module}/../addons/logging/values-template.yaml")}"
 
   vars = {
-    aws_region     = "${var.aws_region}"
-    eks_cluster_name   = "${var.eks_cluster_name}"
-    aws_access_key_id = "${var.aws_access_key_id}"
+    aws_region            = "${var.aws_region}"
+    eks_cluster_name      = "${var.eks_cluster_name}"
+    aws_access_key_id     = "${var.aws_access_key_id}"
     aws_secret_access_key = "${var.aws_secret_access_key}"
   }
 }
