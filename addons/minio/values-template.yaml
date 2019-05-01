@@ -6,7 +6,7 @@ clusterDomain: cluster.local
 ##
 image:
   repository: minio/minio
-  tag: edge
+  tag: RELEASE.2019-04-09T01-22-30Z
   pullPolicy: IfNotPresent
 
 ## Set default image, imageTag, and imagePullPolicy for the `mc` (the minio
@@ -14,7 +14,7 @@ image:
 ##
 mcImage:
   repository: minio/mc
-  tag: edge
+  tag: RELEASE.2019-04-03T17-59-57Z
   pullPolicy: IfNotPresent
 
 ## minio server mode, i.e. standalone or distributed.
@@ -35,25 +35,25 @@ StatefulSetUpdate:
 ## Pod priority settings
 ## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
 ##
-priorityClassName: ""
+priorityClassName: ''
 
 ## Set default accesskey, secretkey, Minio config file path, volume mount path and
 ## number of nodes (only used for Minio distributed mode)
 ## Distributed Minio ref: https://docs.minio.io/docs/distributed-minio-quickstart-guide
 ##
-existingSecret: ""
-accessKey: ${aws_access_key_id}
-secretKey: ${aws_secret_access_key}
-configPath: "/root/.minio/"
-configPathmc: "/root/.mc/"
-mountPath: "/export"
+existingSecret: ''
+accessKey: '${aws_access_key_id}'
+secretKey: '${aws_secret_access_key}'
+configPath: '/root/.minio/'
+configPathmc: '/root/.mc/'
+mountPath: '/export'
 replicas: 4
 
 ## TLS Settings for Minio
 tls:
   enabled: false
   ## Create a secret with private.key and public.crt files and pass that here. Ref: https://github.com/minio/minio/tree/master/docs/tls/kubernetes#2-create-kubernetes-secret
-  certSecret: ""
+  certSecret: ''
   publicCrt: public.crt
   privateKey: private.key
 
@@ -84,7 +84,7 @@ persistence:
   ## If subPath is set mount a sub folder of a volume instead of the root of the volume.
   ## This is especially handy for volume plugins that don't natively support sub mounting (like glusterfs).
   ##
-  subPath: ""
+  subPath: ''
 
 ## Expose the Minio service to be accessed from outside the cluster (LoadBalancer service).
 ## or access it from within the cluster (ClusterIP service). Set the service type and the port to serve it.
@@ -95,17 +95,19 @@ service:
   type: ClusterIP
   clusterIP: ~
   port: 9000
-  # nodePort: 31311
+  nodePort: 31311
   # externalIPs:
   #   - externalIp1
-  annotations: {}
+  annotations:
+    {}
     # prometheus.io/scrape: 'true'
     # prometheus.io/path:   '/minio/prometheus/metrics'
     # prometheus.io/port:   '9000'
 
 ingress:
   enabled: true
-  annotations: {}
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   path: /
@@ -122,6 +124,9 @@ ingress:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+# Additational pod annotations
+podAnnotations: {}
 
 ## Liveness and Readiness probe values.
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -151,7 +156,7 @@ resources:
 defaultBucket:
   enabled: false
   ## If enabled, must be a string with length > 0
-  name: ${eks_cluster_name}-minio
+  name: '${eks_cluster_name}-minio'
   ## Can be one of none|download|upload|public
   policy: none
   ## Purge if bucket exists already
@@ -160,7 +165,8 @@ defaultBucket:
 ## Create multiple buckets after minio install
 ## Enabling `defaultBucket` will take priority over this list
 ##
-buckets: []
+buckets:
+  []
   # - name: bucket1
   #   policy: none
   #   purge: false
@@ -170,8 +176,8 @@ buckets: []
 
 s3gateway:
   enabled: true
-  replicas: 4
-  serviceEndpoint: ""
+  replicas: 1
+  serviceEndpoint: 'https://s3.amazonaws.com'
 
 ## Use minio as an azure blob gateway, you should disable data persistence so no volume claim are created.
 ## https://docs.minio.io/docs/minio-gateway-for-azure
@@ -188,15 +194,15 @@ gcsgateway:
   # Number of parallel instances
   replicas: 4
   # credential json file of service account key
-  gcsKeyJson: ""
+  gcsKeyJson: ''
   # Google cloud project-id
-  projectId: ""
+  projectId: ''
 
 ossgateway:
   enabled: false
   # Number of parallel instances
   replicas: 4
-  endpointURL: ""
+  endpointURL: ''
 
 ## Use minio on NAS backend
 ## https://docs.minio.io/docs/minio-gateway-for-nas
@@ -213,7 +219,7 @@ nasgateway:
 ## when Chart is deployed
 environment:
   ## To disable Minio Browser, set this value to off
-  MINIO_BROWSER: "on"
+  MINIO_BROWSER: 'on'
   ## To enable virtual-host-style requests, set this value to Minio host domain name.
   # MINIO_DOMAIN: ""
   ## Minio Cache settings, refer: https://docs.minio.io/docs/minio-disk-cache-guide.html
@@ -233,97 +239,9 @@ environment:
   # MINIO_PUBLIC_IPS: ""
   # MINIO_DOMAIN: ""
   ## Add other environment variables relevant to Minio server here. These values will be added to the container(s) as this Chart is deployed
+  AWS_ACCESS_KEY_ID: '${aws_access_key_id}'
+  AWS_SECRET_ACCESS_KEY: '${aws_secret_access_key}'
 
-## https://docs.minio.io/docs/minio-bucket-notification-guide
-## https://github.com/minio/minio/blob/master/docs/config
-minioConfig:
-  region: ${aws_region}
-  browser: "on"
-  domain: ""
-  worm: "off"
-  storageClass:
-    standardStorageClass: ""
-    reducedRedundancyStorageClass: ""
-  cache:
-    drives: []
-    expiry: 90
-    maxuse: 80
-    exclude: []
-  aqmp:
-    enable: false
-    url: ""
-    exchange: ""
-    routingKey: ""
-    exchangeType: ""
-    deliveryMode: 0
-    mandatory: false
-    immediate: false
-    durable: false
-    internal: false
-    noWait: false
-    autoDeleted: false
-  nats:
-    enable: false
-    address: ""
-    subject: ""
-    username: ""
-    password: ""
-    token: ""
-    secure: false
-    pingInterval: 0
-    enableStreaming: false
-    clusterID: ""
-    clientID: ""
-    async: false
-    maxPubAcksInflight: 0
-  elasticsearch:
-    enable: false
-    format: "namespace"
-    url: ""
-    index: ""
-  redis:
-    enable: false
-    format: "namespace"
-    address: ""
-    password: ""
-    key: ""
-  postgresql:
-    enable: false
-    format: "namespace"
-    connectionString: ""
-    table: ""
-    host: ""
-    port: ""
-    user: ""
-    password: ""
-    database: ""
-  kafka:
-    enable: false
-    brokers: "null"
-    topic: ""
-  webhook:
-    enable: false
-    endpoint: ""
-  mysql:
-    enable: false
-    format: "namespace"
-    dsnString: ""
-    table: ""
-    host: ""
-    port: ""
-    user: ""
-    password: ""
-    database: ""
-  mqtt:
-    enable: false
-    broker: ""
-    topic: ""
-    qos: 0
-    clientId: ""
-    username: ""
-    password: ""
-    reconnectInterval: 0
-    keepAliveInterval: 0
 networkPolicy:
   enabled: false
   allowExternal: true
