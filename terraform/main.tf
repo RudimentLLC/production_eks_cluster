@@ -29,8 +29,8 @@ locals {
       instance_type         = "t3.medium"
       additional_userdata   = "${var.additional_userdata}"
       subnets               = "${join(",", module.vpc.private_subnets)}"
-      asg_desired_capacity  = 2
-      asg_min_size          = 2
+      asg_desired_capacity  = 3
+      asg_min_size          = 3
       asg_max_size          = 10
       autoscaling_enabled   = "true"
       protect_from_scale_in = "false"
