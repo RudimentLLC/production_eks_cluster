@@ -5,6 +5,7 @@
 *.swp
 config-map-*
 kubeconfig*
+ENV_VARS
 
 # macOS
 .DS_Store

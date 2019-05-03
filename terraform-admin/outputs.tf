@@ -13,3 +13,15 @@ output "remote_state_bucket_name" {
 output "remote_state_lock_table_name" {
   value = "${format("\"%s\"", "${aws_dynamodb_table.remote_state_lock_table.name}")}"
 }
+
+output "aws_region" {
+  value = "${format("\"%s\"", "${var.aws_region}")}"
+}
+
+output "aws_access_key_id" {
+  value = "${format("\"%s\"", "${var.aws_access_key_id}")}"
+}
+
+output "aws_secret_access_key" {
+  value = "${format("\"%s\"", "${var.aws_secret_access_key}")}"
+}
