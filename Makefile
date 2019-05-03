@@ -1,90 +1,93 @@
+################################
+# Makefile Settings
+################################
+
+SHELL := /bin/bash
+KUBECONFIG ?= $${HOME}/.kube/config.eks
+
 .EXPORT_ALL_VARIABLES:
 
-MIN_KUBECTL_VERSION="1.10.4"
-MIN_HELM_VERSION="2.9.0"
-MIN_TILLERLESS_HELM_VERSION="0.2.3"
+################################
 
 
-install: check_helm_environment helm_update tf_init tf_apply set_kubeconfig tiller_install
+################################
+# Complete Setup/Teardown
+################################
 
-uninstall: tiller_uninstall tf_destroy
+install:
+	$(MAKE) tf-admin-create
+	$(MAKE) create-vars
+	source ./ENV_VARS && $(MAKE) main-install
 
-check_helm_environment:
-	./scripts/check-helm-environment.bash ${MIN_KUBECTL_VERSION} ${MIN_HELM_VERSION} ${MIN_TILLERLESS_HELM_VERSION}
+uninstall:
+	$(MAKE) main-uninstall
+	$(MAKE) tf-admin-destroy
+	$(MAKE) clean
 
-check_tfadmin_environment:
-	./scripts/check-tfadmin-environment.bash
+################################
 
-check_tf_environment:
-	./scripts/check-tf-environment.bash
 
-helm_update:
-	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
-	helm repo update
+################################
+# Terraform Admin
+################################
 
-tf_admin_create: check_tfadmin_environment
-	echo "eks_cluster_name = \"$${EKS_CLUSTER_NAME}\"" > terraform-admin/terraform.tfvars
-	echo "aws_access_key_id = \"$${AWS_ACCESS_KEY_ID}\"" >> terraform-admin/terraform.tfvars
-	echo "aws_secret_access_key = \"$${AWS_SECRET_ACCESS_KEY}\"" >> terraform-admin/terraform.tfvars
+tf-admin-create:
+	$(MAKE) -C terraform-admin/ preflight
+	$(MAKE) -C terraform-admin/ install
 
-	$(MAKE) -C terraform-admin/ init
-	$(MAKE) -C terraform-admin/ create
+tf-admin-destroy:
+	$(MAKE) -C terraform-admin/ uninstall
 
-	@$(MAKE) -C terraform-admin/ output > terraform/terraform.tfvars
-	echo "aws_access_key_id = \"$${AWS_ACCESS_KEY_ID}\"" >> terraform/terraform.tfvars
-	echo "aws_secret_access_key = \"$${AWS_SECRET_ACCESS_KEY}\"" >> terraform/terraform.tfvars
+################################
 
-tf_admin_destroy:
-	$(MAKE) -C terraform-admin/ destroy
 
-tf_admin_output:
-	$(MAKE) -C terraform-admin/ output
+################################
+# EKS Cluster
+################################
 
-tf_init: 
-	$(MAKE) -C terraform/ init
+main-install:
+	$(MAKE) -C helm/ preflight
+	$(MAKE) -C cluster/ preflight
+	$(MAKE) -C cluster/ install
+	$(MAKE) set-kubeconfig
+	$(MAKE) -C helm/ install
 
-tf_plan: check_tf_environment
-	$(MAKE) -C terraform/ plan
+main-uninstall:
+	$(MAKE) -C helm/ uninstall
+	$(MAKE) -C cluster/ uninstall
 
-tf_apply: check_tf_environment
-	$(MAKE) -C terraform/ apply
+################################
 
-tf_destroy:
-	$(MAKE) -C terraform/ destroy
 
-tf_output:
-	$(MAKE) -C terraform/ output
+################################
+# Utils
+################################
 
-set_kubeconfig:
-	cat terraform/kubeconfig_* > ${KUBECONFIG}
-	kubectl apply -f terraform/config-map-aws-auth_*.yaml
+set-kubeconfig:
+	cat cluster/kubeconfig_* > ${KUBECONFIG}
+	kubectl apply -f cluster/config-map-aws-auth_*.yaml
 
-tiller_install:
-	helm tiller run -- bash -c 'cd $(CURDIR) ; make install_addons'
+create-vars:
+	echo -n "" > ./ENV_VARS
+	echo "export KUBECONFIG=${KUBECONFIG}" >> ./ENV_VARS
+	echo "export EKS_CLUSTER_NAME=$(shell terraform output -state=terraform-admin/terraform.tfstate eks_cluster_name)" >> ./ENV_VARS
+	echo "export TERRAFORM_ADMIN_ROLE_ARN=$(shell terraform output -state=terraform-admin/terraform.tfstate terraform_admin_role_arn)" >> ./ENV_VARS
+	echo "export REMOTE_STATE_BUCKET_NAME=$(shell terraform output -state=terraform-admin/terraform.tfstate remote_state_bucket_name)" >> ./ENV_VARS
+	echo "export REMOTE_STATE_LOCK_TABLE_NAME=$(shell terraform output -state=terraform-admin/terraform.tfstate remote_state_lock_table_name)" >> ./ENV_VARS
+	echo "export AWS_REGION=$(shell terraform output -state=terraform-admin/terraform.tfstate aws_region)" >> ./ENV_VARS
+	echo "export AWS_ACCESS_KEY_ID=$(shell terraform output -state=terraform-admin/terraform.tfstate aws_access_key_id)" >> ./ENV_VARS
+	echo "export AWS_SECRET_ACCESS_KEY=$(shell terraform output -state=terraform-admin/terraform.tfstate aws_secret_access_key)" >> ./ENV_VARS
 
-tiller_uninstall:
-	helm tiller run -- bash -c 'cd $(CURDIR) ; make uninstall_addons'
+clean:
+	rm -f ./ENV_VARS
 
-install_addons:
-	$(MAKE) -C addons/autoscaling/ install
-	$(MAKE) -C addons/logging/ install
-	$(MAKE) -C addons/prometheus/ install
-	$(MAKE) -C addons/etcd-operator/ install
-	$(MAKE) -C addons/dashboard/ install
-	$(MAKE) -C addons/minio/ install
-
-uninstall_addons:
-	$(MAKE) -C addons/prometheus/ uninstall
-	$(MAKE) -C addons/logging/ uninstall
-	$(MAKE) -C addons/etcd-operator/ uninstall
-	$(MAKE) -C addons/dashboard/ uninstall
-	$(MAKE) -C addons/minio/ uninstall
-	$(MAKE) -C addons/autoscaling/ uninstall
-
-clean: uninstall tf_admin_destroy
+full-clean:
+	rm -rf ./ENV_VARS
+	$(MAKE) -C cluster/ clean
+	$(MAKE) -C helm/ clean
 	$(MAKE) -C terraform-admin/ clean
-	$(MAKE) -C terraform/ clean
-	rm -rf ./.terraform
+
+################################
 
 
-.PHONY: install uninstall check_environment helm_update tf_admin_create tf_admin_destroy tf_admin_output tf_init tf_plan tf_apply tf_destroy tf_output set_kubeconfig tiller_install tiller_uninstall install_addons uninstall_addons clean
+.PHONY: install uninstall tf-admin-create tf-admin-destroy main-install main-uninstall set-kubeconfig create-vars clean full-clean

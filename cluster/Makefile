@@ -1,7 +1,44 @@
+################################
+# Makefile Settings
+################################
+
+SHELL := /bin/bash
+REMOTE_STATE_BUCKET_REGION ?= us-west-2
+REMOTE_STATE_KEY ?= terraform/eks/tfstate
+
 .EXPORT_ALL_VARIABLES:
 
-REMOTE_STATE_KEY ?= terraform/eks/tfstate
-REMOTE_STATE_BUCKET_REGION ?= us-west-2
+################################
+
+
+################################
+# Composite Commands
+################################
+
+preflight: check-environment tfvars
+
+install: init apply
+
+uninstall: destroy clean
+
+################################
+
+
+################################
+# Constituent Commands
+################################
+
+# --- pre-flight ------------- #
+
+check-environment:
+	./scripts/check-environment.bash
+
+tfvars:
+	echo -n "" > ./terraform.tfvars
+	echo "eks_cluster_name = \"$${EKS_CLUSTER_NAME}\"" >> ./terraform.tfvars
+	echo "terraform_admin_role_arn = \"$${TERRAFORM_ADMIN_ROLE_ARN}\"" >> ./terraform.tfvars
+
+# --- main ------------------- #
 
 init:
 	terraform init \
@@ -29,22 +66,26 @@ init-r:
 		-backend-config="region=${REMOTE_STATE_BUCKET_REGION}" \
 		-reconfigure
 
-plan:
-	terraform plan
-
 apply:
 	terraform apply -auto-approve
 
 destroy:
 	terraform destroy -force
-	rm -rf ./.terraform
+
+# --- utils ------------------ #
+
+plan:
+	terraform plan
 
 output:
-	@terraform output
+	terraform output
 
 clean:
 	rm -rf \
 		./.terraform \
 		./terraform.tfvars
+
+################################
+
 
 .PHONY: init init-r plan apply destroy output clean
