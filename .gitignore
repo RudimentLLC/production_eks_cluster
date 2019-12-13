@@ -13,3 +13,5 @@ ENV_VARS
 .LSOverride
 .vscode
 .ropeproject
+
+tfe-token

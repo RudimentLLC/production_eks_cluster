@@ -1,3 +1,0 @@
-# Role bindings used by Makefile
-eks-admin-cluster-role-binding.yaml
-eks-admin-service-account.yaml
