@@ -1,9 +1,9 @@
 image:
   repository: fluent/fluentd-kubernetes-daemonset
-  tag: v0.12.43-cloudwatch
-## Specify an imagePullPolicy (Required)
-## It's recommended to change this to 'Always' if the image tag is 'latest'
-## ref: http://kubernetes.io/docs/user-guide/images/#updating-images
+  tag: v1.3.3-debian-cloudwatch-1.0
+  ## Specify an imagePullPolicy (Required)
+  ## It's recommended to change this to 'Always' if the image tag is 'latest'
+  ## ref: http://kubernetes.io/docs/user-guide/images/#updating-images
   pullPolicy: IfNotPresent
 
 ## Configure resource requests and limits
@@ -22,7 +22,8 @@ resources:
 ## Node labels for pod assignment
 ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
 ##
-nodeSelector: {}
+nodeSelector:
+  {}
   # kubernetes.io/role: node
 # Ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#affinity-v1-core
 # Expects input structure as per specification for example:
@@ -44,11 +45,11 @@ tolerations: []
 
 podAnnotations: {}
 
-awsRegion: ${aws_region}
+awsRegion:
 awsRole:
-awsAccessKeyId: ${aws_access_key_id}
-awsSecretAccessKey: ${aws_secret_access_key}
-logGroupName: ${eks_cluster_name}-eks-logs
+awsAccessKeyId:
+awsSecretAccessKey:
+logGroupName:
 
 rbac:
   ## If true, create and use RBAC resources
