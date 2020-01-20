@@ -17,3 +17,7 @@ output cluster_ca_certificate {
 output worker_node_iam_role_arn {
   value = module.eks.worker_iam_role_arn
 }
+
+output worker_node_iam_role_name {
+  value = module.eks.worker_iam_role_name
+}
