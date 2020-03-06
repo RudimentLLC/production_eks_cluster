@@ -15,7 +15,7 @@ The deployment is composed of several subdirectories within this repo, each desi
 Since some workspaces make use of the outputs from other workspaces, there is an order in which they need to be deployed:
 
 1. `terraform-admin/`
-    - Creates AWS IAM resources (so that AWS credentials don't need to be used in subsequent workspaces)
+    - Creates AWS IAM resources
 2. `vpc/`
     - Creates the AWS networking resources used by the EKS cluster and its workers
     - Depends on outputs from `terraform-admin`

@@ -10,7 +10,7 @@ resource aws_iam_role terraform_admin_role {
     {
       "Action": "sts:AssumeRole",
       "Principal": {
-        "AWS": "*"
+        "AWS": "arn:aws:iam::${var.aws_account_number}:root"
       },
       "Effect": "Allow",
       "Sid": ""

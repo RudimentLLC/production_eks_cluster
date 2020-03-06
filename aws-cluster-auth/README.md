@@ -9,10 +9,12 @@ If running locally, create a `terraform.tfvars` file and paste the following, re
 
 ``` bash
 aws_account_number       =
-aws_region               =
+aws_access_key           =
+aws_secret_key           =
+aws_region               = "us-west-2"
 cluster_ca_certificate   =
-eks_cluster_name         =
 eks_cluster_endpoint     =
+eks_cluster_name         =
 terraform_admin_role_arn =
 worker_node_iam_role_arn =
 ```

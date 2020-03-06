@@ -5,8 +5,10 @@
 If running locally, create a `terraform.tfvars` file and paste the following, replacing the blank values for your context:
 
 ``` bash
-additional_userdata      =
-aws_region               =
+additional_userdata      = ""
+aws_access_key           =
+aws_secret_key           =
+aws_region               = "us-west-2"
 eks_cluster_name         =
 private_subnets          =
 public_subnets           =

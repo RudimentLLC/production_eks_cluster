@@ -1,6 +1,8 @@
 provider aws {
-  version = "~>2.41"
-  region  = var.aws_region
+  version    = "~>2.41"
+  region     = var.aws_region
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
 
   assume_role {
     role_arn     = var.terraform_admin_role_arn
