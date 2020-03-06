@@ -7,7 +7,9 @@ Carbon's EKS configuration runs on top of AWS VPC networking resources.
 If running locally, create a `terraform.tfvars` file and paste the following, replacing the blank values for your context:
 
 ``` bash
-aws_region               =
+aws_access_key           =
+aws_secret_key           =
+aws_region               = "us-west-2"
 eks_cluster_name         =
 terraform_admin_role_arn =
 ```
